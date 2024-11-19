@@ -16,6 +16,8 @@ export default function StudentDetails() {
     const [name, setName] = useState("");
     const [division, setDivision] = useState("");
     const [roll, setRoll] = useState("");
+    const [year, setYear] = useState("");
+    const [branch, setBranch] = useState("");
     const [image, setImage] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -130,10 +132,34 @@ export default function StudentDetails() {
                                         required
                                     />
                                 </div>
+                                <div className="form-group">
+                                    <label>Add Image</label>
+                                    <input type="file" onChange={handleImageChange} />
+                                </div>
                             </div>
                         </div>
                         <div className="form">
                             <div>
+                                <div className="form-group">
+                                    <label>Year</label>
+                                    <input
+                                        type="text"
+                                        value={year}
+                                        onChange={(e) => setYear(e.target.value)}
+                                        placeholder="Enter Year of the Student"
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Branch</label>
+                                    <input
+                                        type="text"
+                                        value={branch}
+                                        onChange={(e) => setBranch(e.target.value)}
+                                        placeholder="Enter Branch of the Student"
+                                        required
+                                    />
+                                </div>
                                 <div className="form-group">
                                     <label>Division</label>
                                     <input
@@ -154,10 +180,6 @@ export default function StudentDetails() {
                                         required
                                     />
                                 </div>
-                                {/* <div className="form-group">
-                                    <label>Add Image</label>
-                                    <input type="file" onChange={handleImageChange} />
-                                </div> */}
                             </div>
                         </div>
                     </div>
