@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getDatabase, ref, onValue } from 'firebase/database';
 import './StudentsGrid.css';
 import './Students.css';
+import Navbar from '../Components/Navbar';
 
 export default function StudentsGrid() {
   const [students, setStudents] = useState([]);

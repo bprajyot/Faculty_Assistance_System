@@ -78,9 +78,9 @@ export default function SignUp() {
           <h1>Sign Up</h1>   
           <hr/><br/>
           <div className="formandimg">
-            <div className="img">
-              <img src="loginimg.png" style={{paddingTop: "5rem"}} alt="Login illustration"/>              
-            </div>
+            {/* <div className="img">
+              <img src="loginimg.png" style={{paddingTop: "2rem"}} alt="Login illustration"/>              
+            </div> */}
 
             <div className="form">
               <div className="form-group">

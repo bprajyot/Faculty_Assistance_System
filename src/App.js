@@ -1,5 +1,5 @@
 import './App.css';
-import HomeNavbar from './Components/Navbar';
+import Navbar from './Components/Navbar';
 import { ToastContainer } from 'react-toastify';
 import Signup from './Components/SignUp';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -14,7 +14,7 @@ import Students from './Pages/Students';
 function App() {
   return (
     <div className="App">
-        <HomeNavbar/>
+        <Navbar/>
         {/* <Loader/> */}
       <Router>
         <Routes>

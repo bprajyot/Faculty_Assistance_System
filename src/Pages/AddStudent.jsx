@@ -26,7 +26,6 @@ export default function StudentDetails() {
         setLoading(true);
 
         try {
-            // Check if PRN already exists
             const existingStudentRef = ref(db, `Students/${PRN}`);
             const snapshot = await get(existingStudentRef);
             if (snapshot.exists()) {
@@ -37,7 +36,6 @@ export default function StudentDetails() {
                 return;
             }
 
-            // Save student data in the database
             await putData(name, PRN, email, division, roll, image);
             toast.success("Student Details Saved Successfully", {
                 position: "top-center",

@@ -7,7 +7,7 @@ import './Navbar.css'
 import { BrowserRouter as Router, NavLink, Routes, Route } from 'react-router-dom'
 import StudentsGrid from '../Pages/StudentsGrid'
 
-export default function Navbar() {
+export default function HomeNavbar() {
     
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const toggleMenu = () => {
@@ -29,9 +29,9 @@ export default function Navbar() {
 
                 <ul className = {isMenuOpen ? 'navbar-links active' : 'navbar-links'}>
                     <li><NavLink onClick={toggleMenu} to = '/home'>Home</NavLink></li>
-                    <li><NavLink onClick={toggleMenu} to = '/takeattendance'>Take Attendance</NavLink></li>
-                    <li><NavLink onClick={toggleMenu} to = '/report'>Report</NavLink></li>
-                    <li><NavLink onClick={toggleMenu} to = '/studentlist'>Student List</NavLink></li>
+                    <li><NavLink onClick={toggleMenu} to = '/takeattendance'>Attendance System</NavLink></li>
+                    <li><NavLink onClick={toggleMenu} to = '/report'>Project Tracker</NavLink></li>
+                    <li><NavLink onClick={toggleMenu} to = '/studentlist'>Course Planning</NavLink></li>
                 </ul>
             </div>
 
