@@ -1,7 +1,7 @@
 .container{
     background-color: #141B2D;
-    padding: 20px
- 
+    padding: 20px;
+    height: 100%;
 }
 
 .screen{
@@ -101,3 +101,86 @@
     text-decoration: underline;
   }
   
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+    margin: 0;
+  }
+  
+  .nav-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .nav-buttons button {
+    padding: 8px 12px;
+    background-color: #1F2A4D;
+    color: #FFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .nav-buttons button:hover {
+    background-color: #293B66;
+  }
+  
+  /* Division Options */
+  .division-options{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+  }
+
+  .division-options ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+    margin-top: 2px;
+  }
+  
+  .division-options ul li {
+    cursor: pointer;
+    color: #D1D1D1;
+  }
+  
+  .division-options ul li:hover {
+    color: #FFF;
+  }
+  
+  /* Search Bar */
+  .search-bar {
+    margin-bottom: 20px;
+  }
+  
+  .search-bar input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    font-size: 1rem;
+    background-color: #1F2A4D;
+    color: #FFF;
+  }
+
+  .students {
+    width: 100%;
+    background-color: #141B2D;
+    color: #FFF;
+    font-family: Arial, sans-serif;
+  }
+
+  .students-mid {
+    margin: 0 auto;
+    max-width: 90%;
+    padding: 20px;
+  }

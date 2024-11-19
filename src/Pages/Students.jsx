@@ -43,16 +43,6 @@ export default function Students() {
             <button className="manual-btn">Download</button>
           </div>
         </div>
-        <div className="division-options">
-          <ul>
-            <li>TY CSAI A</li>
-            <li>SY CSAI A</li>
-            <li>SY CSAI B</li>
-          </ul>
-        </div>
-        <div className="search-bar">
-          <input type="text" placeholder="Search by name or student PRN" />
-        </div>
         <div className="table">
           <table className="students-table">
             <thead>

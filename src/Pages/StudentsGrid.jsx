@@ -45,23 +45,16 @@ export default function StudentsGrid() {
   );
 
   return (
-    <div className="container">
-      <div className="header" style={{ margin: "0 5rem 1rem 5rem" }}>
-        <h1>Students List</h1>
-        <div className="nav-buttons">
-          <button className="overview-btn" onClick={handleListViewClick}>List View</button>
-          <button className="download-btn" onClick={handleGridViewClick}>Grid View</button>
-          <button className="manual-btn">Download</button>
+    <div className="students">
+      <div className="students-mid">
+      <div className="header">
+          <h1>Students List</h1>
+          <div className="nav-buttons">
+            <button className="overview-btn" onClick={handleListViewClick}>List View</button>
+            <button className="download-btn" onClick={handleGridViewClick}>Grid View</button>
+            <button className="manual-btn">Download</button>
+          </div>
         </div>
-      </div>
-      <div className="division-options" style={{ margin: "0 5rem" }}>
-        <ul>
-          <li onClick={() => handleDivisionClick('ALL')}>ALL</li>
-          <li onClick={() => handleDivisionClick('TYCSAI A')}>TY CSAI A</li>
-          <li onClick={() => handleDivisionClick('SYCSAI A')}>SY CSAI A</li>
-          <li onClick={() => handleDivisionClick('SYCSAI B')}>SY CSAI B</li>
-        </ul>
-      </div>
 
       <h2 style={{ margin: "20px 0" }}>
         {filteredDivision === 'ALL' ? 'Showing All Students' : `Showing Results for ${filteredDivision}`}
@@ -97,6 +90,7 @@ export default function StudentsGrid() {
             </div>
           </div>
         ))}
+      </div>
       </div>
     </div>
   );
