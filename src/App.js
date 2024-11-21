@@ -10,6 +10,7 @@ import Home from './Pages/Home';
 import Attendance from './Pages/Attendance';
 import Report from './Pages/Report';
 import Students from './Pages/Students';
+import Quiz from './Pages/Quiz';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path = '/report' element = {<Report/>}/>
             <Route path = '/studentlist' element = {<Students/>}/>
             <Route path='/studentgrid' element={<StudentsGrid/>} />
+            <Route path='/quiz' element={<Quiz/>} />
         </Routes>
       </Router>
       <ToastContainer />

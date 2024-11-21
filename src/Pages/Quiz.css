@@ -1,0 +1,110 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Arial", sans-serif;
+  background-color: #1e293b;
+  color: #f1f5f9;
+}
+
+.app {
+  text-align: center;
+  padding: 20px;
+}
+
+.app-header {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #3b82f6;
+  margin-bottom: 20px;
+}
+
+.upload-container,
+.quiz-container,
+.result-container {
+  background-color: #334155;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 600px;
+  margin: auto;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.upload-container h2,
+.quiz-container h2,
+.result-container h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+}
+
+input[type="file"],
+input[type="number"] {
+  display: block;
+  margin: 15px auto;
+  padding: 10px;
+  border: 2px solid #475569;
+  border-radius: 8px;
+  background-color: #1e293b;
+  color: #f1f5f9;
+  width: 80%;
+  max-width: 400px;
+  font-size: 1rem;
+}
+
+.options {
+  text-align: left;
+  margin: 20px 0;
+}
+
+.option {
+  margin: 10px 0;
+  display: block;
+  font-size: 1rem;
+  color: #e2e8f0;
+}
+
+button {
+  margin: 10px;
+  padding: 12px 20px;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #3b82f6;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2563eb;
+}
+
+button:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.loading {
+  font-size: 1.2rem;
+  margin: 20px 0;
+  color: #fbbf24;
+}
+
+.error-message {
+  margin: 20px auto;
+  padding: 15px;
+  max-width: 600px;
+  color: #f87171;
+  background-color: #1e293b;
+  border: 1px solid #f87171;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.navigation-buttons {
+  margin-top: 20px;
+}
+
+.navigation-buttons button {
+  width: 120px;
+}
+
