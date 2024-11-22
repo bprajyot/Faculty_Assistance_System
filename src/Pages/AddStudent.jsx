@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import React, { useState } from 'react';
 import './AddStudent.css';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../Components/Loader';
@@ -32,12 +32,17 @@ export default function StudentDetails() {
             formData.append('year', year);
             formData.append('branch', branch);
             if (image) {
-                formData.append('image', image);  // Add image to FormData
+                formData.append('image', image);
             }
 
-            const response = await fetch('http://localhost:5000/add_student', {  // Ensure correct URL to Flask API
+            // Debugging form data
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
+            }
+
+            const response = await fetch('http://localhost:5000/add_student', {
                 method: 'POST',
-                body: formData,  // Send as FormData
+                body: formData,
             });
 
             const result = await response.json();
@@ -46,7 +51,6 @@ export default function StudentDetails() {
                 toast.success("Student Details Saved Successfully", {
                     position: "top-center",
                     autoClose: 3000,
-                    
                 });
                 navigate('/home');
             } else {
@@ -81,91 +85,85 @@ export default function StudentDetails() {
                 <div className="inner">
                     <h1>Student Details</h1>
                     <hr /><br />
-                    <div className="formandimg">
-                        <div>
-                            <div style={{ width: "150%" }}>
-                                <div className="form-group">
-                                    <label>Name</label>
-                                    <input
-                                        type="text"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                        placeholder="Enter Full Name of the Student"
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>PRN</label>
-                                    <input
-                                        type="number"
-                                        value={PRN}
-                                        onChange={(e) => setPRN(e.target.value)}
-                                        placeholder="Enter PRN of the Student"
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Email</label>
-                                    <input
-                                        type="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="Enter email of the Student"
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Add Image</label>
-                                    <input type="file" onChange={handleImageChange} />
-                                </div>
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-container">
+                            <div className="form-group">
+                                <label>Name</label>
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    placeholder="Enter Full Name of the Student"
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Year</label>
+                                <input
+                                    type="text"
+                                    value={year}
+                                    onChange={(e) => setYear(e.target.value)}
+                                    placeholder="Enter Year of the Student"
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>PRN</label>
+                                <input
+                                    type="text"
+                                    value={PRN}
+                                    onChange={(e) => setPRN(e.target.value)}
+                                    placeholder="Enter PRN of the Student"
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Branch</label>
+                                <input
+                                    type="text"
+                                    value={branch}
+                                    onChange={(e) => setBranch(e.target.value)}
+                                    placeholder="Enter Branch of the Student"
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Email</label>
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="Enter email of the Student"
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Division</label>
+                                <input
+                                    type="text"
+                                    value={division}
+                                    onChange={(e) => setDivision(e.target.value)}
+                                    placeholder="Enter Division of the Student"
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Roll Number</label>
+                                <input
+                                    type="text"
+                                    value={roll}
+                                    onChange={(e) => setRoll(e.target.value)}
+                                    placeholder="Enter Roll Number of the Student"
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Add Image</label>
+                                <input type="file" onChange={handleImageChange} />
                             </div>
                         </div>
-                        <div className="form">
-                            <div>
-                                <div className="form-group">
-                                    <label>Year</label>
-                                    <input
-                                        type="text"
-                                        value={year}
-                                        onChange={(e) => setYear(e.target.value)}
-                                        placeholder="Enter Year of the Student"
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Branch</label>
-                                    <input
-                                        type="text"
-                                        value={branch}
-                                        onChange={(e) => setBranch(e.target.value)}
-                                        placeholder="Enter Branch of the Student"
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Division</label>
-                                    <input
-                                        type="text"
-                                        value={division}
-                                        onChange={(e) => setDivision(e.target.value)}
-                                        placeholder="Enter Division of the Student"
-                                        required
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Roll Number</label>
-                                    <input
-                                        type="number"
-                                        value={roll}
-                                        onChange={(e) => setRoll(e.target.value)}
-                                        placeholder="Enter Roll Number of the Student"
-                                        required
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <button onClick={handleSubmit} type="submit" className="submit-btn">Submit</button>
+                        <button type="submit" className="submit-btn">Submit</button>
+                    </form>
                 </div>
             </div>
         </div>

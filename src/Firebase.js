@@ -4,14 +4,14 @@ import { getDatabase } from "firebase/database";  // Import for database
 import { getStorage } from "firebase/storage";  // Import for storage
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBg0U4f8uWQ64_UUEwmUu1sNuMh-NhabLQ",
-  authDomain: "ty-edi-i.firebaseapp.com",
-  projectId: "ty-edi-i",
-  storageBucket: "ty-edi-i.appspot.com",
-  messagingSenderId: "556901163389",
-  appId: "1:556901163389:web:fd2349c7d0cc724fd92c14",
+  apiKey: "AIzaSyBTQ057pgOYi_BIiiUK0KDrBkK_EC2feKk",
+  authDomain: "ty-edi.firebaseapp.com",
+  projectId: "ty-edi",
+  storageBucket: "ty-edi.firebasestorage.app",
+  messagingSenderId: "288915412402",
+  appId: "1:288915412402:web:8f0d76c76272dd8aec80ab", 
   measurementId: "G-1R8MM49EGE",
-  databaseURL: "https://ty-edi-i-default-rtdb.firebaseio.com/"
+  databaseURL: "https://ty-edi-default-rtdb.firebaseio.com/"
 };
 
 // Initialize Firebase

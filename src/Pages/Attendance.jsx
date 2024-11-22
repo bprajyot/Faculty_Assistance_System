@@ -48,7 +48,8 @@ function AttendancePage() {
           <ul>
             {attendanceResults.map((result, index) => (
               <li key={index}>
-                {result.name} (PRN: {result.prn}) - Confidence: {result.confidence.toFixed(2)}%
+                {console.log(result)}
+                {result.roll_number} | {result.name} | (PRN: {result.prn}) - Confidence: {result.confidence.toFixed(2)}%
               </li>
             ))}
           </ul>

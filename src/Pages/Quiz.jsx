@@ -1,23 +1,18 @@
-// App.js
 import React, { useState } from 'react';
 import { jsPDF } from 'jspdf';
 import * as pdfjsLib from 'pdfjs-dist';
 import './Quiz.css';
 
-// Initialize PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
 
 const GENAI_API_KEY = 'AIzaSyC9Lv74WbFRgZCs-k0h2ka0mMXKOura2Sk';
 
 const App = () => {
   const [quizData, setQuizData] = useState(null);
-  const [userAnswers, setUserAnswers] = useState([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
-  const [currentStep, setCurrentStep] = useState('upload'); // 'upload', 'quiz', 'result'
+  const [showQuestions, setShowQuestions] = useState(false); // New state to toggle showing questions
 
   const showError = (message) => {
     setError(message);
@@ -76,7 +71,7 @@ const App = () => {
         }
       `;
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=AIzaSyC9Lv74WbFRgZCs-k0h2ka0mMXKOura2Sk`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${GENAI_API_KEY}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -131,9 +126,6 @@ const App = () => {
       setProgress(100);
 
       setQuizData(mcqs);
-      setUserAnswers(new Array(mcqs.mcqs.length).fill(null));
-      setCurrentQuestionIndex(0);
-      setCurrentStep('quiz');
     } catch (error) {
       showError(error.message);
       console.error('Error:', error);
@@ -141,12 +133,6 @@ const App = () => {
       setLoading(false);
       setProgress(0);
     }
-  };
-
-  const saveAnswer = (answer) => {
-    const newAnswers = [...userAnswers];
-    newAnswers[currentQuestionIndex] = answer;
-    setUserAnswers(newAnswers);
   };
 
   const downloadMCQs = () => {
@@ -158,12 +144,10 @@ const App = () => {
     const margin = 20;
     const maxWidth = pageWidth - 2 * margin;
 
-    // Add title
     doc.setFontSize(16);
     doc.text('Multiple Choice Questions', margin, yPos);
     yPos += lineHeight * 2;
 
-    // Add questions and answers
     doc.setFontSize(12);
     quizData.mcqs.forEach((mcq, index) => {
       if (yPos > 250) {
@@ -193,159 +177,90 @@ const App = () => {
     doc.save('mcq_questions.pdf');
   };
 
-  const submitQuiz = () => {
-    let score = 0;
-    quizData.mcqs.forEach((mcq, index) => {
-      if (userAnswers[index] === mcq.correct_answer) score++;
-    });
-    setCurrentStep('result');
-  };
-
   return (
     <div className="container max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold mb-6">MCQ Quiz Generator and Test</h1>
+      <h1 className="text-2xl font-bold mb-6">MCQ Quiz Generator</h1>
       
       {error && (
         <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
           {error}
         </div>
       )}
-      
-      {currentStep === 'upload' && (
-        <section className="border rounded p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Step 1: Upload PDF</h2>
-          <div className="space-y-4">
+
+      <section className="border rounded p-6 mb-6">
+        <h2 className="text-xl font-semibold mb-4">Upload PDF</h2>
+        <div className="space-y-4">
+          <input
+            type="file"
+            accept=".pdf"
+            onChange={handleFileUpload}
+            className="block w-full"
+          />
+          <div>
+            <label htmlFor="numQuestions" className="block mb-2">
+              Number of questions:
+            </label>
             <input
-              type="file"
-              accept=".pdf"
-              onChange={handleFileUpload}
-              className="block w-full"
+              type="number"
+              id="numQuestions"
+              min="1"
+              max="20"
+              defaultValue="5"
+              className="border rounded px-3 py-2"
             />
-            <div>
-              <label htmlFor="numQuestions" className="block mb-2">
-                Number of questions:
-              </label>
-              <input
-                type="number"
-                id="numQuestions"
-                min="1"
-                max="20"
-                defaultValue="5"
-                className="border rounded px-3 py-2"
-              />
-            </div>
           </div>
-          
-          {loading && (
-            <div className="mt-4">
-              <p>Generating MCQs...</p>
-              <div className="bg-gray-200 rounded-full h-2.5 mt-2">
-                <div
-                  className="bg-green-600 h-2.5 rounded-full transition-all"
-                  style={{ width: `${progress}%` }}
-                ></div>
-              </div>
-            </div>
-          )}
-        </section>
-      )}
-
-      {currentStep === 'quiz' && quizData && (
-        <section className="border rounded p-6">
-          <h2 className="text-xl font-semibold mb-4">Step 2: Take the Quiz</h2>
-          <div className="mb-6">
-            <div className="font-semibold mb-2">
-              Question {currentQuestionIndex + 1} of {quizData.mcqs.length}
-            </div>
-            <p className="text-lg mb-4">{quizData.mcqs[currentQuestionIndex].question}</p>
-            <div className="space-y-3">
-              {Object.entries(quizData.mcqs[currentQuestionIndex].options).map(([key, value]) => (
-                <label key={key} className="flex items-center p-3 border rounded hover:bg-gray-50 cursor-pointer">
-                  <input
-                    type="radio"
-                    name={`question${currentQuestionIndex}`}
-                    value={key}
-                    checked={userAnswers[currentQuestionIndex] === key}
-                    onChange={() => saveAnswer(key)}
-                    className="mr-3"
-                  />
-                  {key}: {value}
-                </label>
-              ))}
-            </div>
-          </div>
-          
-          <div className="flex justify-between">
-            <button
-              onClick={() => setCurrentQuestionIndex(prev => prev - 1)}
-              disabled={currentQuestionIndex === 0}
-              className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300"
-            >
-              Previous
-            </button>
-            <button
-              onClick={() => setCurrentQuestionIndex(prev => prev + 1)}
-              disabled={currentQuestionIndex === quizData.mcqs.length - 1}
-              className="px-4 py-2 bg-blue-500 text-white rounded disabled:bg-gray-300"
-            >
-              Next
-            </button>
-            <button
-              onClick={submitQuiz}
-              className="px-4 py-2 bg-green-500 text-white rounded"
-            >
-              Submit
-            </button>
-          </div>
-        </section>
-      )}
-
-      {currentStep === 'result' && quizData && (
-        <section className="border rounded p-6">
-          <h2 className="text-xl font-semibold mb-4">Quiz Results</h2>
-          {quizData.mcqs.map((mcq, index) => {
-            const isCorrect = userAnswers[index] === mcq.correct_answer;
-            return (
+        </div>
+        
+        {loading && (
+          <div className="mt-4">
+            <p>Generating MCQs...</p>
+            <div className="bg-gray-200 rounded-full h-2.5 mt-2">
               <div
-                key={index}
-                className={`mb-6 p-4 rounded ${
-                  isCorrect ? 'bg-green-50' : 'bg-red-50'
-                }`}
-              >
-                <p className="font-semibold">Question {index + 1}: {mcq.question}</p>
-                <p>Your answer: {userAnswers[index] ? 
-                  `${userAnswers[index]}: ${mcq.options[userAnswers[index]]}` : 
-                  'Not answered'
-                }</p>
-                <p className="text-green-700">
-                  Correct answer: {mcq.correct_answer}: {mcq.options[mcq.correct_answer]}
-                </p>
-              </div>
-            );
-          })}
-          
-          <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-4">
-              Final Score: {userAnswers.filter((answer, index) => 
-                answer === quizData.mcqs[index].correct_answer
-              ).length} out of {quizData.mcqs.length}
-              ({((userAnswers.filter((answer, index) => 
-                answer === quizData.mcqs[index].correct_answer
-              ).length / quizData.mcqs.length) * 100).toFixed(2)}%)
-            </h3>
+                className="bg-green-600 h-2.5 rounded-full transition-all"
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
+          </div>
+        )}
+      </section>
+
+      {quizData && (
+        <section className="border rounded p-6">
+          <div className="flex space-x-4">
             <button
               onClick={downloadMCQs}
-              className="px-4 py-2 bg-blue-500 text-white rounded mr-4"
+              className="px-4 py-2 bg-blue-500 text-white rounded"
             >
-              Download MCQs with Answers
+              Download PDF
             </button>
             <button
-              onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-green-500 text-white rounded"
+              onClick={() => setShowQuestions(prev => !prev)} // Toggle display of questions
+              className="px-4 py-2 bg-gray-500 text-white rounded"
             >
-              Start New Quiz
+              Check Questions
             </button>
           </div>
+
+          {/* Conditionally render the list of questions only when "Check Questions" is clicked */}
+          {showQuestions && (
+            <ul className="mt-6" style={{ listStyleType: 'decimal', paddingLeft: '20px' }}>
+              {quizData.mcqs.map((mcq, index) => (
+                <li key={index} style={{ marginBottom: '10px' }}>
+                  <strong>{index + 1}. </strong>{mcq.question}
+                  <ul style={{ listStyleType: 'none', paddingLeft: '20px' }}>
+                    {Object.entries(mcq.options).map(([key, value]) => (
+                      <li key={key}>
+                        <strong>{key}:</strong> {value}
+                      </li>
+                    ))}
+                    <li style={{ color: 'green', fontWeight: 'bold' }}>
+                      Correct Answer: {mcq.correct_answer}
+                    </li>
+                  </ul>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
       )}
     </div>
