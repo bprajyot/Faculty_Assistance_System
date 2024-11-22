@@ -1,14 +1,9 @@
 import { React, useState } from 'react';
 import './AddStudent.css';
-import { getDatabase, ref, set, get } from 'firebase/database';
-import { app, storage } from '../Firebase';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../Components/Loader';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
-
-const db = getDatabase(app);
 
 export default function StudentDetails() {
     const [email, setEmail] = useState("");
@@ -28,60 +23,47 @@ export default function StudentDetails() {
         setLoading(true);
 
         try {
-            const existingStudentRef = ref(db, `Students/${PRN}`);
-            const snapshot = await get(existingStudentRef);
-            if (snapshot.exists()) {
-                toast.error("PRN already exists!", {
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('prn', PRN);
+            formData.append('name', name);
+            formData.append('division', division);
+            formData.append('roll', roll);
+            formData.append('year', year);
+            formData.append('branch', branch);
+            if (image) {
+                formData.append('image', image);  // Add image to FormData
+            }
+
+            const response = await fetch('http://localhost:5000/add_student', {  // Ensure correct URL to Flask API
+                method: 'POST',
+                body: formData,  // Send as FormData
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                toast.success("Student Details Saved Successfully", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    
+                });
+                navigate('/home');
+            } else {
+                toast.error(result.error || "Failed to save student details", {
                     position: "bottom-center",
                     autoClose: 5000,
                 });
-                return;
             }
-
-            await putData(name, PRN, email, division, roll, image);
-            toast.success("Student Details Saved Successfully", {
-                position: "top-center",
-                autoClose: 3000,
-            });
-
-            navigate('/home');
         } catch (error) {
             console.error('Error during form submission:', error);
-            toast.error("Error saving student details", {
+            toast.error("Error connecting to the server", {
                 position: "bottom-center",
                 autoClose: 5000,
             });
         } finally {
             setLoading(false);
         }
-    };
-
-    const uploadImage = async (image) => {
-        try {
-            const imageRef = storageRef(storage, `images/${image.name}`);
-            await uploadBytes(imageRef, image);
-            const imageUrl = await getDownloadURL(imageRef);
-            return imageUrl;
-        } catch (error) {
-            console.error('Error uploading image:', error);
-            throw error;
-        }
-    };
-
-    const putData = async (name, PRN, email, division, roll, image) => {
-        let imageUrl = null;
-        if (image) {
-            imageUrl = await uploadImage(image);
-        }
-
-        return set(ref(db, `Students/${PRN}`), {
-            Name: name,
-            PRN: PRN,
-            Email: email,
-            Division: division,
-            RollNumber: roll,
-            image: imageUrl,
-        });
     };
 
     const handleImageChange = (e) => {
