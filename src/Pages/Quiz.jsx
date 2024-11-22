@@ -12,7 +12,9 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
-  const [showQuestions, setShowQuestions] = useState(false); // New state to toggle showing questions
+  const [showQuestions, setShowQuestions] = useState(false);
+  const [textContent, setTextContent] = useState('');
+  const [generateLoading, setGenerateLoading] = useState(false);
 
   const showError = (message) => {
     setError(message);
@@ -24,26 +26,33 @@ const App = () => {
       const arrayBuffer = await file.arrayBuffer();
       const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
       let fullText = '';
-      
+
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
         const textContent = await page.getTextContent();
-        const pageText = textContent.items.map(item => item.str).join(' ');
+        const pageText = textContent.items.map((item) => item.str).join(' ');
         fullText += pageText + '\n';
       }
-      
+
+      setTextContent(fullText.trim());
       return fullText.trim();
     } catch (error) {
       throw new Error('Error reading PDF: ' + error.message);
     }
   };
 
-  const generateMCQs = async (text, numQuestions) => {
+  const generateMCQs = async (numQuestions) => {
+    setGenerateLoading(true);
+    setProgress(30);
     try {
+      const text = textContent;
+      if (!text.trim()) {
+        throw new Error('No text could be extracted from the PDF');
+      }
+
       const maxLength = 30000;
-      const truncatedText = text.length > maxLength ? 
-        text.slice(0, maxLength) + "..." : 
-        text;
+      const truncatedText =
+        text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 
       const prompt = `
         Create ${numQuestions} multiple-choice questions based on this text. For each question:
@@ -71,41 +80,49 @@ const App = () => {
         }
       `;
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${GENAI_API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }]
-        })
-      });
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${GENAI_API_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(`API Error: ${errorData.error?.message || 'Unknown error'}`);
+        throw new Error(
+          `API Error: ${errorData.error?.message || 'Unknown error'}`
+        );
       }
 
       const data = await response.json();
-      
+
       if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
         throw new Error('Invalid response format from API');
       }
 
       const mcqsText = data.candidates[0].content.parts[0].text;
       const jsonMatch = mcqsText.match(/\{[\s\S]*\}/);
-      
+
       if (!jsonMatch) {
         throw new Error('No valid JSON found in response');
       }
 
-      return JSON.parse(jsonMatch[0]);
+      setQuizData(JSON.parse(jsonMatch[0]));
+      setProgress(100);
     } catch (error) {
-      throw new Error(`Failed to generate MCQs: ${error.message}`);
+      showError(`Failed to generate MCQs: ${error.message}`);
+      console.error('Error:', error);
+    } finally {
+      setGenerateLoading(false);
     }
   };
 
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
-    const numQuestions = document.getElementById('numQuestions').value;
 
     if (!file) {
       showError('Please select a PDF file');
@@ -122,10 +139,7 @@ const App = () => {
       }
       setProgress(60);
 
-      const mcqs = await generateMCQs(text, numQuestions);
       setProgress(100);
-
-      setQuizData(mcqs);
     } catch (error) {
       showError(error.message);
       console.error('Error:', error);
@@ -135,57 +149,23 @@ const App = () => {
     }
   };
 
-  const downloadMCQs = () => {
-    const doc = new jsPDF();
-    
-    let yPos = 20;
-    const lineHeight = 10;
-    const pageWidth = doc.internal.pageSize.width;
-    const margin = 20;
-    const maxWidth = pageWidth - 2 * margin;
-
-    doc.setFontSize(16);
-    doc.text('Multiple Choice Questions', margin, yPos);
-    yPos += lineHeight * 2;
-
-    doc.setFontSize(12);
-    quizData.mcqs.forEach((mcq, index) => {
-      if (yPos > 250) {
-        doc.addPage();
-        yPos = 20;
-      }
-
-      const questionText = `Question ${index + 1}: ${mcq.question}`;
-      const splitQuestion = doc.splitTextToSize(questionText, maxWidth);
-      doc.text(splitQuestion, margin, yPos);
-      yPos += lineHeight * splitQuestion.length;
-
-      Object.entries(mcq.options).forEach(([key, value]) => {
-        const optionText = `${key}: ${value}`;
-        const splitOption = doc.splitTextToSize(optionText, maxWidth);
-        doc.text(splitOption, margin + 5, yPos);
-        yPos += lineHeight * splitOption.length;
-      });
-
-      doc.setTextColor(0, 100, 0);
-      doc.text(`Correct Answer: ${mcq.correct_answer}`, margin, yPos);
-      doc.setTextColor(0, 0, 0);
-      
-      yPos += lineHeight * 2;
-    });
-
-    doc.save('mcq_questions.pdf');
+  const downloadQuestions = () => {
+    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(quizData, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute('href', dataStr);
+    downloadAnchor.setAttribute('download', 'mcq_questions.json');
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
   };
 
   return (
     <div className="container max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
       <h1 className="text-2xl font-bold mb-6">MCQ Quiz Generator</h1>
-      
+
       {error && (
-        <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
-          {error}
-        </div>
-      )} <hr/>
+        <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</div>
+      )}
 
       <section className="box">
         <h2 className="text-xl font-semibold mb-4">Upload PDF</h2>
@@ -210,58 +190,67 @@ const App = () => {
             />
           </div>
         </div>
-        
-        {loading && (
-          <div className="mt-4">
-            <p>Generating MCQs...</p>
-            <div className="bg-gray-200 rounded-full h-2.5 mt-2">
-              <div
-                className="bg-green-600 h-2.5 rounded-full transition-all"
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
-          </div>
-        )}
+
+        <div className="flex space-x-4 mt-4">
+          {quizData ? (
+            <>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded"
+                onClick={() => setShowQuestions((prev) => !prev)}
+              >
+                {showQuestions ? 'Hide Questions' : 'Check Questions'}
+              </button>
+              <button
+                className="px-4 py-2 bg-green-500 text-white rounded"
+                onClick={downloadQuestions}
+              >
+                Download Questions
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={async () => {
+                const numQuestions = document.getElementById('numQuestions').value;
+                await generateMCQs(numQuestions);
+              }}
+              className="px-4 py-2 bg-blue-500 text-white rounded"
+              disabled={loading || generateLoading}
+            >
+              {generateLoading ? 'Generating Questions...' : 'Generate Questions'}
+            </button>
+          )}
+        </div>
       </section>
 
-      {quizData && (
-        <section className="border rounded p-6">
-          <div className="flex space-x-4">
-            <button
-              onClick={downloadMCQs}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
-            >
-              Download PDF
-            </button>
-            <button
-              onClick={() => setShowQuestions(prev => !prev)} // Toggle display of questions
-              className="px-4 py-2 bg-gray-500 text-white rounded"
-            >
-              Check Questions
-            </button>
-          </div>
-
-          {/* Conditionally render the list of questions only when "Check Questions" is clicked */}
-          {showQuestions && (
-            <ul className="mt-6" style={{ listStyleType: 'decimal', paddingLeft: '20px' }}>
+      {showQuestions && quizData && (
+        <div className="table-container">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Question</th>
+                <th>Options</th>
+                <th>Correct Answer</th>
+              </tr>
+            </thead>
+            <tbody>
               {quizData.mcqs.map((mcq, index) => (
-                <li key={index} style={{ marginBottom: '10px' }}>
-                  <strong>{index + 1}. </strong>{mcq.question}
-                  <ul style={{ listStyleType: 'none', paddingLeft: '20px' }}>
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>{mcq.question}</td>
+                  <td>
                     {Object.entries(mcq.options).map(([key, value]) => (
-                      <li key={key}>
+                      <div key={key}>
                         <strong>{key}:</strong> {value}
-                      </li>
+                      </div>
                     ))}
-                    <li style={{ color: 'green', fontWeight: 'bold' }}>
-                      Correct Answer: {mcq.correct_answer}
-                    </li>
-                  </ul>
-                </li>
+                  </td>
+                  <td className="correct-answer">{mcq.correct_answer}</td>
+                </tr>
               ))}
-            </ul>
-          )}
-        </section>
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

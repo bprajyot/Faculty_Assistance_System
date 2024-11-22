@@ -18,7 +18,9 @@ export default function Navbar() {
             <nav style={{ width: '100%' }}>
                 <div className='navbar'>
                     <div className='navbar-logo'>
-                        Attendance System
+                        <a style = {{textDecoration: "none", color: "white"}}onClick={toggleMenu} href='/home'>
+                            <strong>Faculty Assistance System</strong>
+                        </a>
                     </div>
 
                     <div className='menu' onClick={toggleMenu}>
@@ -28,7 +30,7 @@ export default function Navbar() {
                     </div>
 
                     <ul className={isMenuOpen ? 'navbar-links active' : 'navbar-links'}>
-                        <li><a onClick={toggleMenu} href='/home'>Home</a></li>
+                        {/* <li><a onClick={toggleMenu} href='/home'>Home</a></li> */}
                         <li><a onClick={toggleMenu} href='/takeattendance'>Take Attendance</a></li>
                         <li><a onClick={toggleMenu} href='/quiz'>Quiz</a></li>
                         <li><a onClick={toggleMenu} href='/addstudents'>Add Students</a></li>
