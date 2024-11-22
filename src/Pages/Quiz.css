@@ -110,3 +110,9 @@ button:disabled {
 .navigation-buttons button {
   width: 120px;
 }
+
+.box {
+  border: 2px #FEFEFE solid;
+  padding: 1.5rem;
+  border-radius: 1rem;
+}

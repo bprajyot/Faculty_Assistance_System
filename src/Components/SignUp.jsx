@@ -14,8 +14,8 @@ const db = getDatabase(app);
 export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [Name, setName] = useState("");
+  const [facultyID, setFacultyID] = useState("");
   const [loading, setLoading] = useState(false);  // Loading state
 
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export default function SignUp() {
 
       if (user) {
         // If user creation is successful, save their data in the database
-        await putData(user.uid, firstName, lastName, email);
+        await putData(Name, facultyID, email);
         console.log("User created and data saved:", user);
         
         // Redirect to the home page after successful sign-up
@@ -51,11 +51,10 @@ export default function SignUp() {
     }
   }
 
-  const putData = (userId, firstName, lastName, email) => {
-    return set(ref(db, `Faculties/${firstName}`), {
-      uid: userId,
-      firstName: firstName,
-      lastName: lastName,
+  const putData = (Name, facultyID, email) => {
+    return set(ref(db, `Faculties/${facultyID}`), {
+      facultyID: facultyID,
+      Name: Name,
       email: email
     })
     .then(() => {
@@ -78,28 +77,28 @@ export default function SignUp() {
           <h1>Sign Up</h1>   
           <hr/><br/>
           <div className="formandimg">
-            {/* <div className="img">
+            <div className="img">
               <img src="loginimg.png" style={{paddingTop: "2rem"}} alt="Login illustration"/>              
-            </div> */}
+            </div>
 
-            <div className="form">
+            <div className="form" style = {{marginLeft: "2rem"}}>
               <div className="form-group">
-                <label style={{textAlign: "left"}}>First Name</label>
+                <label style={{textAlign: "left"}}>Name</label>
                 <input
                   type="text"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="Enter your first name"
+                  value={Name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter your name"
                   required
                 />
               </div>
               <div className="form-group">
-                <label>Last Name</label>
+                <label>Faculty ID</label>
                 <input
                   type="text"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Enter your last name"
+                  value={facultyID}
+                  onChange={(e) => setFacultyID(e.target.value)}
+                  placeholder="Enter your facutly id"
                   required
                 />
               </div>

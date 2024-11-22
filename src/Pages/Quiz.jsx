@@ -185,9 +185,9 @@ const App = () => {
         <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
           {error}
         </div>
-      )}
+      )} <hr/>
 
-      <section className="border rounded p-6 mb-6">
+      <section className="box">
         <h2 className="text-xl font-semibold mb-4">Upload PDF</h2>
         <div className="space-y-4">
           <input
