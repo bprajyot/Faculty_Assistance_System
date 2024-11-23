@@ -10,7 +10,6 @@
     border-bottom: white 2px solid;
     z-index: 1000;  /* Ensures the navbar stays above other content */
 }
-
 .navbar-logo {
     color: white;
     font-size: 1.5rem;
@@ -33,7 +32,7 @@
 .navbar-links a {
     color: white;
     text-decoration: none;
-    font-size: 1rem;
+    font-size: 1.1rem;
 }
 
 .menu {

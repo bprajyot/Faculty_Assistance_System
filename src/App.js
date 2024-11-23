@@ -1,4 +1,6 @@
 import './App.css';
+import React, { useState, useEffect } from 'react';
+import { PlusCircle, Trash2, Check, X, Link as LinkIcon } from 'lucide-react';
 import Navbar from './Components/Navbar';
 import { ToastContainer } from 'react-toastify';
 import Signup from './Components/SignUp';
@@ -11,10 +13,12 @@ import Attendance from './Pages/Attendance';
 import Report from './Pages/Report';
 import Students from './Pages/Students';
 import Quiz from './Pages/Quiz';
+import ProjectTracker from './Pages/ProjectTracker';
 
 function App() {
   return (
     <div className="App">
+      
         <Navbar/>
         {/* <Loader/> */}
       <Router>
@@ -22,13 +26,14 @@ function App() {
             <Route path='/signup' element={<Signup/>} />
             <Route path='/signin' element={<SignIn/>} />
             <Route path='/addstudents' element={<AddStudent/>} />
-            <Route path = '/' element = {<SignIn/>}/>
+            <Route path = '/' element = {<Home/>}/>
             <Route path = '/home' element = {<Home/>}/>
             <Route path = '/takeattendance' element = {<Attendance/>}/>
             <Route path = '/report' element = {<Report/>}/>
             <Route path = '/studentlist' element = {<Students/>}/>
             <Route path='/studentgrid' element={<StudentsGrid/>} />
             <Route path='/quiz' element={<Quiz/>} />
+            <Route path='/tracker' element={<ProjectTracker/>} />
         </Routes>
       </Router>
       <ToastContainer />

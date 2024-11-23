@@ -30,11 +30,10 @@ export default function Navbar() {
                     </div>
 
                     <ul className={isMenuOpen ? 'navbar-links active' : 'navbar-links'}>
-                        {/* <li><a onClick={toggleMenu} href='/home'>Home</a></li> */}
+                        <li><a onClick={toggleMenu} href='/addstudents'>Add Students</a></li>
                         <li><a onClick={toggleMenu} href='/takeattendance'>Take Attendance</a></li>
                         <li><a onClick={toggleMenu} href='/quiz'>Quiz</a></li>
-                        <li><a onClick={toggleMenu} href='/addstudents'>Add Students</a></li>
-                        <li><a onClick={toggleMenu} href='/signin'>LogIn</a></li>
+                        <li><a onClick={toggleMenu} href='/tracker'>Projects</a></li>
                     </ul>
                 </div>
 
